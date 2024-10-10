@@ -1,156 +1,299 @@
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      #playPauseButtonContainer {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        text-align: center;
-        z-index: 999;
-      }
+        /* Container for dropdown menus */
+        #catalogueContainer {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            display: none; /* Hidden by default */
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+        }
 
-      #playPauseButton {
-        width: 50px;
-        height: 50px;
-        background: url('https://cdn-icons-png.flaticon.com/512/109/109197.png') no-repeat center center;
-        background-size: contain;
-        border: 2px solid #ffffff;
-        border-radius: 30%;
-        cursor: pointer;
-        outline: none;
-      }
+        #catalogueContainer select {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            background-color: #FFF;
+            border: none;
+            color: black; /* Default color */
+        }
 
-      #playPauseButton:hover {
-        background-color: rgba(0, 0, 0, 0.3);
-      }
+        #catalogueContainer select.selected {
+            color: green; /* Change color when selected */
+        }
 
-      #playPauseText {
-        margin-top: 5px;
-        font-size: 14px;
-        color: #ffffff;
-      }
+        #catalogueContainer h3 {
+            color: #FFF;
+            margin: 0 10px 0 0;
+            font-size: 16px;
+        }
 
-      #customButton {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background-color: transparent;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        z-index: 1000;
-      }
+        #buyNowContainer, #playPauseButtonContainer {
+            position: absolute;
+            bottom: 20px;
+            z-index: 999;
+            text-align: center;
+        }
 
-      #customButton:hover {
-        text-decoration: underline;
-      }
+        #buyNowContainer {
+            left: 20px;
+            display: none; /* Hidden by default */
+        }
 
-      /* Hide the VR button */
-      .a-enter-vr-button {
-        display: none !important;
-      }
+        #playPauseButtonContainer {
+            right: 20px;
+            display: none; /* Hidden by default */
+        }
+
+        #buyNowButton, #playPauseButton {
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #FFD700;
+            color: #000;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            border: none;
+        }
+
+        .a-enter-vr-button {
+            display: none !important;
+        }
     </style>
-  </head>
-  <body>
-    <a-scene
-      mindar-image="imageTargetSrc: ./targets.mind"
-      color-space="sRGB"
-      renderer="colorManagement: true, physicallyCorrectLights"
-      vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: false">
-      
-      <a-assets>
-        <video id="video1" src="./video1.mp4" playsinline muted loop></video>
-        <video id="video2" src="./video2.mp4" playsinline muted loop></video>
-        <video id="video3" src="./video3.mp4" playsinline muted loop></video>
-        <video id="video4" src="./video4.mp4" playsinline muted loop></video>
-      </a-assets>
-
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
-      <!-- Target 1 -->
-      <a-entity id="target1" mindar-image-target="targetIndex: 0">
-        <a-plane material="src: #video1" position="0 0 0" height="0.59" width="1"></a-plane>
-      </a-entity>
-
-      <!-- Target 2 -->
-      <a-entity id="target2" mindar-image-target="targetIndex: 1">
-        <a-plane material="src: #video2" position="0 0 0" height="0.59" width="1"></a-plane>
-      </a-entity>
-
-      <!-- Target 3 -->
-      <a-entity id="target3" mindar-image-target="targetIndex: 2">
-        <a-plane material="src: #video3" position="0 0 0" height="0.59" width="1"></a-plane>
-      </a-entity>
-
-      <!-- Target 4 -->
-      <a-entity id="target4" mindar-image-target="targetIndex: 3">
-        <a-plane material="src: #video4" position="0 0 0" height="0.59" width="1"></a-plane>
-      </a-entity>
-    </a-scene>
-
-    <div id="playPauseButtonContainer">
-      <button id="playPauseButton"></button>
-      <div id="playPauseText">Play with Sound</div>
+</head>
+<body>
+    <!-- Catalogue Selection UI -->
+    <div id="catalogueContainer">
+        <!-- Gold Jewelry -->
+        <div>
+            <h3>Gold <br> Jewellery :</h3>
+            <select id="goldJewelrySelect">
+                <option value="">-- Select --</option>
+                <option value="ring">Gold Ring</option>
+                <option value="necklace">Gold Necklace</option>
+                <option value="earrings">Gold Earrings</option>
+                <option value="bracelet">Gold Bracelet</option>
+            </select>
+        </div>
+        <br>.</br>
+        <!-- Diamond Jewelry -->
+        <div>
+            <h3>Diamond<br>Jewellery:</h3>
+            <select id="diamondJewelrySelect">
+                <option value="">--Select--</option>
+                <option value="ring">Diamond Ring</option>
+                <option value="necklace">Diamond Necklace</option>
+                <option value="earrings">Diamond Earrings</option>
+                <option value="bracelet">Diamond Bracelet</option>
+            </select>
+        </div>
     </div>
 
+    <!-- Buy Now Button (hidden initially) -->
+    <div id="buyNowContainer">
+        <button id="buyNowButton">Buy Now</button>
+    </div>
+
+    <!-- Play/Pause Button (hidden initially) -->
+    <div id="playPauseButtonContainer">
+        <button id="playPauseButton">Play with Audio</button>
+    </div>
+
+    <!-- AR Scene -->
+    <a-scene
+        mindar-image="imageTargetSrc: ./targets.mind"
+        color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false">
+
+        <a-assets>
+            <!-- Gold Jewelry Videos -->
+            <video id="goldRingVideo" src="gold rings.mp4" playsinline loop></video>
+            <video id="goldNecklaceVideo" src="gold chain.mp4" playsinline loop></video>
+            <video id="goldEarringsVideo" src="gold earring.mp4" playsinline loop></video>
+            <video id="goldBraceletVideo" src="gold bracelet.mp4" playsinline loop></video>
+
+            <!-- Diamond Jewelry Videos -->
+            <video id="diamondRingVideo" src="DIAMOND ring.mp4" playsinline loop></video>
+            <video id="diamondNecklaceVideo" src="DIAMOND chain.mp4" playsinline loop></video>
+            <video id="diamondEarringsVideo" src="DIAMOND earing.mp4" playsinline loop></video>
+            <video id="diamondBraceletVideo" src="DIAMOND bracelet.mp4" playsinline loop></video>
+
+            <!-- Logo Image -->
+            <img id="logoImage" src="4k.png" />
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <!-- Single Target -->
+        <a-entity id="target1" mindar-image-target="targetIndex: 0">
+            <!-- Logo to appear just on top of the target -->
+            <a-image src="#logoImage" position="0 0.57 .1" width=".8" height=".8"></a-image>
+
+            <!-- Jewelry Video Display Entity (changes based on user selection) -->
+            <a-plane id="videoDisplay" position="0 0 0" height="0.59" width="1"></a-plane>
+        </a-entity>
+    </a-scene>
+
     <script>
-      const videos = {
-        1: document.querySelector('#video1'),
-        2: document.querySelector('#video2'),
-        3: document.querySelector('#video3'),
-        4: document.querySelector('#video4')
-      };
+        const videoDisplay = document.querySelector('#videoDisplay');
+        const buyNowContainer = document.querySelector('#buyNowContainer');
+        const buyNowButton = document.querySelector('#buyNowButton');
+        const playPauseButton = document.querySelector('#playPauseButton');
+        const playPauseButtonContainer = document.querySelector('#playPauseButtonContainer');
 
-      let currentTarget = null;  // To track which target is currently found
-      let isPlaying = false;  // To track play state
+        // Jewelry videos
+        let currentVideo = null;
+        let isPlaying = false;
+        let targetVisible = false;
 
-      const button = document.querySelector('#playPauseButton');
-      const buttonText = document.querySelector('#playPauseText');
+        // Dropdown elements
+        const goldJewelrySelect = document.querySelector('#goldJewelrySelect');
+        const diamondJewelrySelect = document.querySelector('#diamondJewelrySelect');
 
-      button.addEventListener('click', function () {
-        if (currentTarget && videos[currentTarget].paused) {
-          videos[currentTarget].muted = false;  // Unmute the video
-          videos[currentTarget].play();  // Play the video
-          button.style.backgroundImage = "url('https://cdn-icons-png.flaticon.com/512/109/109197.png')";
-          buttonText.textContent = 'Pause';
-          isPlaying = true;
-        } else if (currentTarget) {
-          videos[currentTarget].pause();  // Pause the video
-          buttonText.textContent = 'Play with Sound';
-          isPlaying = false;
-        }
-      });
+        // Function to reset other dropdowns to default when one is selected
+        const resetOtherDropdowns = (currentSelect) => {
+            const allSelects = [goldJewelrySelect, diamondJewelrySelect];
+            allSelects.forEach(select => {
+                if (select !== currentSelect) {
+                    select.value = "";
+                    select.classList.remove('selected'); // Reset class of unselected dropdowns
+                }
+            });
+        };
 
-      // Helper to pause video when target is lost
-      const pauseVideo = (targetNumber) => {
-        if (isPlaying) {
-          videos[targetNumber].pause();
-          videos[targetNumber].muted = true;
-          buttonText.textContent = 'Play with Sound';
-          isPlaying = false;
-        }
-      };
+        // Function to update video and play/pause controls
+        const changeJewelryVideo = (videoElement, productLink) => {
+            if (currentVideo) {
+                currentVideo.pause();
+            }
+            currentVideo = videoElement;
+            videoDisplay.setAttribute('material', 'src', `#${videoElement.id}`);
 
-      // Add event listeners for target found and lost
-      for (let i = 1; i <= 4; i++) {
-        const target = document.querySelector(`#target${i}`);
+            // Show the Buy Now button with the respective product link
+            buyNowContainer.style.display = 'block';
+            buyNowButton.onclick = () => {
+                window.open(productLink, '_blank');
+            };
 
-        target.addEventListener('targetFound', () => {
-          currentTarget = i;
-          if (isPlaying) {
-            videos[i].play();
-          }
+            // Show Play/Pause button
+            playPauseButtonContainer.style.display = 'block';
+            playPauseButton.textContent = 'Play with Audio'; // Updated text
+        };
+
+        // Change the color of the dropdown text to green when selected
+        const changeSelectedDropdownColor = (selectElement) => {
+            if (selectElement.value !== "") {
+                selectElement.classList.add('selected'); // Add class to change text color
+            }
+        };
+
+        // Event listeners for each dropdown
+        goldJewelrySelect.addEventListener('change', (event) => {
+            resetOtherDropdowns(goldJewelrySelect);  // Reset other dropdowns
+            changeSelectedDropdownColor(goldJewelrySelect); // Change text color
+
+            switch (event.target.value) {
+                case 'ring':
+                    changeJewelryVideo(document.querySelector('#goldRingVideo'), 'https://www.bluestone.com/jewellery/rings.html');
+                    break;
+                case 'necklace':
+                    changeJewelryVideo(document.querySelector('#goldNecklaceVideo'), 'https://www.bluestone.com/jewellery/necklaces.html');
+                    break;
+                case 'earrings':
+                    changeJewelryVideo(document.querySelector('#goldEarringsVideo'), 'https://www.bluestone.com/jewellery/earrings.html');
+                    break;
+                case 'bracelet':
+                    changeJewelryVideo(document.querySelector('#goldBraceletVideo'), 'https://www.bluestone.com/jewellery/bangles.html');
+                    break;
+                default:
+                    break;
+            }
         });
 
-        target.addEventListener('targetLost', () => {
-          pauseVideo(i);
+        diamondJewelrySelect.addEventListener('change', (event) => {
+            resetOtherDropdowns(diamondJewelrySelect);  // Reset other dropdowns
+            changeSelectedDropdownColor(diamondJewelrySelect); // Change text color
+
+            switch (event.target.value) {
+                case 'ring':
+                    changeJewelryVideo(document.querySelector('#diamondRingVideo'), 'https://example.com/diamond-rings');
+                    break;
+                case 'necklace':
+                    changeJewelryVideo(document.querySelector('#diamondNecklaceVideo'), 'https://example.com/diamond-necklaces');
+                    break;
+                case 'earrings':
+                    changeJewelryVideo(document.querySelector('#diamondEarringsVideo'), 'https://example.com/diamond-earrings');
+                    break;
+                case 'bracelet':
+                    changeJewelryVideo(document.querySelector('#diamondBraceletVideo'), 'https://example.com/diamond-bracelets');
+                    break;
+                default:
+                    break;
+            }
         });
-      }
+
+        // Play/Pause functionality
+        playPauseButton.addEventListener('click', () => {
+            if (currentVideo && targetVisible) {
+                if (isPlaying) {
+                    currentVideo.pause();
+                    playPauseButton.textContent = 'Play with Audio'; // Show Play when paused
+                } else {
+                    currentVideo.play();
+                    playPauseButton.textContent = 'Pause'; // Show Pause when playing
+                }
+                isPlaying = !isPlaying; // Toggle the play state
+            }
+        });
+
+        // Handle target found and lost events
+        const target1 = document.querySelector('#target1');
+
+        target1.addEventListener('targetFound', () => {
+            targetVisible = true;
+            // Show the dropdown menu only when the target is found
+            document.querySelector('#catalogueContainer').style.display = 'flex';
+
+            // Show the Buy Now button
+            buyNowContainer.style.display = 'block'; 
+            playPauseButtonContainer.style.display = 'block'; // Show Play/Pause button
+
+            if (!isPlaying) {
+                playPauseButton.textContent = 'Play with Audio'; // Updated text
+            }
+        });
+
+        target1.addEventListener('targetLost', () => {
+            targetVisible = false;
+            // Hide the dropdown menu when the target is lost
+            document.querySelector('#catalogueContainer').style.display = 'none';
+            buyNowContainer.style.display = 'none'; // Hide Buy Now button
+            playPauseButtonContainer.style.display = 'none'; // Hide Play/Pause button
+
+            if (currentVideo) {
+                currentVideo.pause();
+            }
+            isPlaying = false;
+            playPauseButton.textContent = 'Play with Audio'; // Reset text when target lost
+        });
     </script>
-  </body>
+</body>
 </html>
